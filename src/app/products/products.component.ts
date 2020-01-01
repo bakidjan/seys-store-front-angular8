@@ -1,8 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {CatalogueService} from '../services/catalogue.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {FileUploader} from 'ng2-file-upload';
 import {HttpEventType, HttpResponse} from '@angular/common/http';
 import {AuthenticationService} from '../services/authentication.service';
+import {ProductModel} from '../models/product.model';
 
 @Component({
   selector: 'app-products',
@@ -10,14 +12,13 @@ import {AuthenticationService} from '../services/authentication.service';
   styleUrls: ['./products.component.css']
 })
 export class ProductsComponent implements OnInit {
-  private selectedProducts: any;
+  private products: ProductModel;
   private currentProduct: any;
-  private editPhoto: boolean;
-  private currentFileToUpload: any;
+  private photoSelectedToUpload: any;
+  private photoToEdit: boolean;
+  private currentPhotoSelected: File;
   private progress: number;
-  private selectedFiles: any;
-  private titleProduct: string;
-  private timeStamp: any;
+  private timeStamp: Date;
 
   constructor(private catService: CatalogueService,
               private activatedRoute: ActivatedRoute,
@@ -26,35 +27,36 @@ export class ProductsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.router.events.subscribe(data => {
-      if (data instanceof NavigationEnd) {
-        let defaultId = this.activatedRoute.snapshot.params.p1;
-        if (defaultId == 1) {
-          this.titleProduct = 'Selection';
-          this.getProductSelected('/products/search/selectedProducts');
-        } else if (defaultId == 2) {
+    let p1 = this.activatedRoute.snapshot.params.p1;
+    if (p1 == 1) {
+      this.catService.title = "Selection";
+      this.getProducts('/products/search/selectedProducts');
+    }
+
+    this.router.events.subscribe((val) => {
+      if (val instanceof NavigationEnd) {
+        let p1 = this.activatedRoute.snapshot.params.p1;
+        if (p1 == 1) {
+          this.getProducts('/products/search/selectedProducts');
+        } else if (p1 == 2) {
           let idCat = this.activatedRoute.snapshot.params.p2;
-          this.titleProduct = 'Produits de la categorie '+idCat;
-          this.getProductSelected('/categories/' + idCat + '/products');
-        } else if (defaultId == 3) {
-          this.titleProduct = 'Produits en Promo';
-          this.getProductSelected('/products/search/promoProducts');
-        } else if (defaultId == 4) {
-          this.titleProduct = 'Produits disponibles';
-          this.getProductSelected('/products/search/availableProducts');
+          this.getProducts('/categories/' + idCat + '/products');
+        }
+        else if (p1 == 3) {
+          this.getProducts('/products/search/promoProducts');
+        }
+        else if (p1 == 4) {
+          this.getProducts('/products/search/availableProducts');
         }
       }
     });
-    let defaultId = this.activatedRoute.snapshot.params.p1;
-    if (defaultId == 1) {
-      this.getProductSelected('/products/search/selectedProducts');
-    }
+
   }
 
-  private getProductSelected(url) {
+  getProducts(url) {
     this.catService.getResource(url)
       .subscribe(data => {
-        this.selectedProducts = data;
+        this.products = data;
       }, error => {
         console.log(error);
       });
@@ -62,18 +64,18 @@ export class ProductsComponent implements OnInit {
 
   onEditPhoto(p: any) {
     this.currentProduct = p;
-    this.editPhoto = true;
+    this.photoToEdit = true;
   }
 
-  onSelectedFile(event) {
-    this.selectedFiles = event.target.files;
+  onChargePhotoSelectedToUpload(event) {
+    this.photoSelectedToUpload = event.target.files;
   }
 
-  onUploadPhoto() {
+  onUploadPhotoSelected() {
+    this.currentPhotoSelected = this.photoSelectedToUpload.item(0);
     this.progress = 0;
-    this.currentFileToUpload = this.selectedFiles.item(0);
-    this.catService.uploadPhotoProduct(this.currentFileToUpload, this.currentProduct.id)
-      .subscribe(event => {
+    this.catService.uploadPhoto(this.currentPhotoSelected, this.currentProduct.id)
+      .subscribe(event=>{
         if (event.type === HttpEventType.UploadProgress) {
           this.progress = Math.round(100 * event.loaded / event.total);
         } else if (event instanceof HttpResponse) {
@@ -82,26 +84,25 @@ export class ProductsComponent implements OnInit {
           this.timeStamp  = new Date();
         }
       }, error => {
-        alert('Probleme de chargement');
-      });
-    this.selectedFiles = undefined;
+        console.log(error)
+      })
+    this.photoSelectedToUpload = undefined;
   }
 
-  getTS() {
+  getTs() {
     return this.timeStamp;
   }
 
-  uploadButtonVisible() {
-    return this.selectedFiles
+  isAdmin() {
+    return this.authService.isAdmin()
   }
 
-  onAddProductToCaddy(p) {
-    console.log(p)
+  buttonUploadVisible() {
+    return this.photoSelectedToUpload;
   }
 
-  onProductDetails(p) {
-    let url = btoa(p._links.self.href);
-    this.router.navigateByUrl('product-details/'+url);
-
+  onProductDetails(p: ProductModel) {
+    let url = btoa(p._links.product.href);
+    this.router.navigateByUrl("product-details/"+url)
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from '../services/authentication.service';
 import {Router} from '@angular/router';
 
@@ -8,21 +8,21 @@ import {Router} from '@angular/router';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  private messageError: string;
 
-  constructor( private authService: AuthenticationService,
-               private router: Router) { }
+  constructor(private authService: AuthenticationService, private router: Router) {
+  }
 
   ngOnInit() {
   }
 
   onLogin(value: any) {
     this.authService.login(value.username, value.password);
-    if(this.authService.isAuthenticated){
-      this.authService.saveUserAuthenticated();
+    if (this.authService.isAuthenticated) {
+      /*
+      * save user before products access*/
+      this.authService.saveAuthenticatedUser();
+      this.authService.loadUserAuthenticatedFromLocalStorage();
       this.router.navigateByUrl('');
-    } else {
-      this.messageError = "ce user n'est pas enregistré "
     }
   }
 }

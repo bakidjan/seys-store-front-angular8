@@ -6,11 +6,12 @@ import {Injectable} from '@angular/core';
 export class AuthenticationService {
   users = [
     {username: 'admin', password: '1234', roles: ['ADMIN', 'USER']},
-    {username: 'user1', password: '1234', roles: ['USER']},
-    {username: 'user2', password: '1234', roles: ['USER']},
+    {username: 'user', password: '1234', roles: ['USER']},
+    {username: 'user2', password: '1234', roles: ['USER']}
   ];
-  userAuthenticated;
-  isAuthenticated: boolean;
+
+  public isAuthenticated: boolean;
+  public userAuthenticated;
   private token: string;
 
   constructor() {
@@ -21,7 +22,10 @@ export class AuthenticationService {
     this.users.forEach(u => {
       if (u.username == username && u.password == password) {
         user = u;
-        this.token = btoa(JSON.stringify({username: u.username, roles: u.roles}));
+        /*
+        * enregistrer le token de user
+        * username et roles pour ne pas garder son mdp*/
+        this.token = btoa(JSON.stringify({username: u.username, roles : u.roles}))
       }
     });
     if (user) {
@@ -34,7 +38,7 @@ export class AuthenticationService {
   }
 
   isAdmin() {
-    if (this.isAuthenticated) {
+    if (this.userAuthenticated) {
       if (this.userAuthenticated.roles.indexOf('ADMIN') > -1) {
         return true;
       }
@@ -42,24 +46,24 @@ export class AuthenticationService {
     }
   }
 
-  saveUserAuthenticated() {
-    if (this.userAuthenticated) {
-      localStorage.setItem('authToken', this.token);
+  saveAuthenticatedUser(){
+    if(this.userAuthenticated){
+      localStorage.setItem('authToken', this.token)
     }
   }
 
   loadUserAuthenticatedFromLocalStorage(){
-    let userEncodedTokenBase64 = localStorage.getItem('authToken');
-    if (userEncodedTokenBase64){
-      let userDecodeTokenBase64 = JSON.parse(atob(userEncodedTokenBase64));
-      this.userAuthenticated = {username : userDecodeTokenBase64.username, roles: userDecodeTokenBase64.roles};
+    let tok = localStorage.getItem('authToken');
+    if(tok){
+      let user = JSON.parse(atob(tok))
+      this.userAuthenticated = {username : user.username, roles : user.roles}
       this.isAuthenticated = true;
-      this.token = userEncodedTokenBase64
+      this.token = tok;
     }
   }
 
-  removeUserAuthenticatedFromLocalStorage(){
-    localStorage.removeItem("authToken");
+  removeTokenFromLocalStorage(){
+    localStorage.removeItem('authToken');
     this.isAuthenticated = false;
     this.userAuthenticated = undefined;
     this.token = undefined;
