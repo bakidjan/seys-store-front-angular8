@@ -1,52 +1,45 @@
-<div><h3>{{titleProduct}}</h3></div>
-<div class="card-columns ">
-  <div *ngIf="selectedProducts">
-    <div *ngFor="let p of selectedProducts._embedded.products | paginate: { itemsPerPage: 6, currentPage: p }">
-      <div class="card">
-        <div class="card-header">{{p.name}}</div>
-        <div class="card-body">
-          <div>
-            <img class="btn clickable img-thumbnail" (click)="onProductDetails(p)" src="{{this.catService.host+'/photoProduct/'+p.id+'?ts='+getTS()}}" height="100" alt="">
-          </div>
-          <div *ngIf="authService.isAdmin()">
-            <p>
-              <button class="btn btn-danger btn-sm fa fa-edit" (click)="onEditPhoto(p)"></button>
-            </p>
-            <p *ngIf="editPhoto==true && currentProduct==p">
-              <button class="btn btn-sm btn-info rounded" style="height: 35px"><input type="file"
-                                                                                      (change)="onSelectedFile($event)"
-                                                                                      style="width: 55px; height: 30px">
-              </button>
-              <button *ngIf="uploadButtonVisible()" class="btn btn-success btn-sm fa fa-check"
-                      (click)="onUploadPhoto()"></button>
-              {{progress}}
-            </p>
-          </div>
-          {{p.currentPrice}} <span class="fa fa-euro" href=""></span>
-          <div>
-            <img *ngIf="p.promotion" src="assets/images/promo.png" style="height: 30px" class="img-thumbnail rounded-circle">
-            <img *ngIf="p.selected" src="assets/images/favorite.png" style="height: 30px" class="img-thumbnail rounded-circle">
-            <img *ngIf="p.available" src="assets/images/available.png" style="height: 30px" class="img-thumbnail rounded-circle">
-          </div>
-          <p></p>
-          <div>
-            <form #f="ngForm" (ngSubmit)="onAddProductToCaddy(p)">
-              <div class="form-group">
-                <label for="Quantity"></label>
-                <input type="number" min="1" max="10" name="quantity" ngModel style="width: 35px" [(ngModel)]="p.quantity">
-                <button class="border border-info rounded">
-                  <img src="assets/images/caddy.png" style="height: 20px" class="img-thumbnail">
-                </button>
-              </div>
-            </form>
-          </div>
+<div><h3>{{this.catService.title}}</h3></div>
+<div class="card-columns">
+  <div class="card heightCard" *ngFor="let p of products?._embedded.products | paginate: { itemsPerPage: 6, currentPage: p }">
+    <div class="card-header">{{p.name}}</div>
+    <div class="card-body">
+        <img class="img-thumbnail rounded btn" (click)="onProductDetails(p)" [src]="this.catService.host+'/photoProduct/'+p.id+'?ts='+getTs()"
+                height="100">
+        <div *ngIf="isAdmin()">
+          <p class="btn btn-sm btn-warning fa fa-edit" (click)="onEditPhoto(p)"></p>
+          <p *ngIf="currentProduct==p && photoToEdit==true">
+            <button class="btn btn-sm btn-info rounded">
+              <input  type="file" (change)="onChargePhotoSelectedToUpload($event)" ngModel style="width: 55px">
+            </button>
+            <button *ngIf="buttonUploadVisible()" class="btn btn-sm btn-success fa fa-check"
+                    (click)="onUploadPhotoSelected()"></button>
+            {{progress}}
+          </p>
         </div>
+        <div>Prix : {{p.currentPrice}}</div>
+      <div>
+        <span *ngIf="p.promotion">
+          <img src="assets/images/promo.png" class="img-thumbnail rounded-circle " style="height :30px">
+        </span>
+        <span *ngIf="p.selected">
+          <img src="assets/images/favorite.png" class="img-thumbnail rounded-circle " style="height :30px">
+        </span>
+        <span *ngIf="p.available">
+          <img src="assets/images/available.png" class="img-thumbnail rounded-circle " style="height :30px">
+        </span>
       </div>
+    </div>
+    <div>
+      <form #f="ngForm" (ngSubmit)="onAddProductsToCaddy(p)">
+        <div class="form-group">
+          <label> Qauntité : </label>
+          <input type="number" name="quantity" [(ngModel)]="p.quantity" style="width:30px; height: 20px">
+          <button class="border border-success rounded">
+            <img src="assets/images/caddy.png" class="img-thumbnail" style="height :20px">
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
 <pagination-controls (pageChange)="p = $event"></pagination-controls>
-
-
-
-

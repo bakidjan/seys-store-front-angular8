@@ -1,1 +1,93 @@
-cjxhb :cx
+<div *ngIf="currentProduct">
+  <div class="card" *ngIf="mode==0" >
+    <div *ngIf="isAdmin()" class="card-header">Fiche du Produit : {{currentProduct.name}}
+      <span class="btn btn-sm float-right fa fa-edit" (click)="onEditProduct()"></span>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-5 btn border-2">
+          <img class="img-thumbnail rounded" [src]="this.catService.host+'/photoProduct/'+currentProduct.id+'?ts='+getTs()"
+               height="100">
+          <div *ngIf="isAdmin()">
+            <p class="btn btn-sm btn-warning fa fa-edit" (click)="onEditPhoto(currentProduct)"></p>
+            <p *ngIf="currentProduct && photoToEdit==true">
+              <button class="btn btn-sm btn-info rounded">
+                <input  type="file" (change)="onChargePhotoSelectedToUpload($event)" ngModel style="width: 55px">
+              </button>
+              <button *ngIf="buttonUploadVisible()" class="btn btn-sm btn-success fa fa-check"
+                      (click)="onUploadPhotoSelected()"></button>
+              {{progress}}
+            </p>
+          </div>
+          <p></p>
+          <div>
+        <span *ngIf="currentProduct.promotion">
+          <img src="assets/images/promo.png" class="img-thumbnail rounded-circle " style="height :30px">
+        </span>
+            <span *ngIf="currentProduct.selected">
+          <img src="assets/images/favorite.png" class="img-thumbnail rounded-circle " style="height :30px">
+        </span>
+            <span *ngIf="currentProduct.available">
+          <img src="assets/images/available.png" class="img-thumbnail rounded-circle " style="height :30px">
+        </span>
+          </div>
+          <p></p>
+          <div>
+            <form #f="ngForm" (ngSubmit)="onAddProductsToCaddy(p)">
+              <div class="form-group">
+                <label> Qauntité : </label>
+                <input type="number" name="quantity" [(ngModel)]="currentProduct.quantity" style="width:30px; height: 20px">
+                <button class="border border-success rounded">
+                  <img src="assets/images/caddy.png" class="img-thumbnail" style="height :20px">
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-6 border border-3">
+          <div class="card-body">
+            <label >Prix : {{currentProduct.currentPrice}}</label>
+          </div>
+          <div class="card-body">
+            <label>Description : {{currentProduct.description}}</label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <div *ngIf="mode==1" >
+    <div class="card-body border border-info" >
+      <form #f="ngForm" (ngSubmit)="onUpdateProduct(f.value)">
+        <div class="form-group">
+          <label>Nom</label>
+          <input class="form-control" type="text" name="name" ngModel [(ngModel)]="currentProduct.name">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input class="form-control" type="text" name="description" ngModel [(ngModel)]="currentProduct.description">
+        </div>
+        <div class="form-group">
+          <label>Prix</label>
+          <input class="form-control" type="number" name="currentPrice" ngModel [(ngModel)]="currentProduct.currentPrice">
+        </div>
+        <div class="form-group">
+          <label>Promotion</label>
+          <input class="form-control" type="text" name="promotion" ngModel [(ngModel)]="currentProduct.promotion">
+        </div>
+        <div class="form-group">
+          <label>Available</label>
+          <input class="form-control" type="text" name="available" ngModel [(ngModel)]="currentProduct.available">
+        </div>
+        <div class="form-group">
+          <label>Selected</label>
+          <input class="form-control" type="text" name="selected" ngModel [(ngModel)]="currentProduct.selected">
+        </div>
+        <button class="btn btn-sm btn-success" type="submit">Update</button>
+      </form>
+    </div>
+  </div>
+  <p></p>
+</div>

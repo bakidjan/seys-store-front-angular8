@@ -20,16 +20,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'ecom-front-angular'`, () => {
+  it(`should have as title 'ecom-diallo'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('ecom-front-angular');
+    expect(app.title).toEqual('ecom-diallo');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('ecom-front-angular app is running!');
+    expect(compiled.querySelector('.content span').textContent).toContain('ecom-diallo app is running!');
   });
 });

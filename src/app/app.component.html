@@ -1,56 +1,56 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="btn btn-sm btn-warning border border-success fa fa-shopping-cart" href="#"></a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="btn btn-sm btn-warning fa fa-list"></span>
+  <a class="navbar-brand btn btn-sm btn-warning fa fa-shopping-cart" routerLink="/">e-com</a>
+  <button class="navbar-toggler btn btn-sm btn-warning " type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
   </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
+  <div class="collapse navbar-collapse" id="navbarNavDropdown">
     <ul class="navbar-nav">
       <li class="nav-item active">
-        <a class="nav-link clickable" (click)="onSelectedProducts()" >Home <span class="sr-only">(current)</span></a>
+        <a class="nav-link " routerLink="/">Home <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Produits
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item clickable" (click)="onProductsPromo()">Promo</a>
-          <a class="dropdown-item clickable" (click)="onProductsAvailable()">Disponibles</a>
-          <a class="dropdown-item" href="#">Something else here</a>
+          <a class="dropdown-item clickable" (click)="onGetPromoProducts()">Promotion</a>
+          <a class="dropdown-item clickable" (click)="onGetAvailableProducts()">Disponibles</a>
         </div>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Features</a>
+        <a class="nav-link" routerLink="login">Login</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">Pricing</a>
       </li>
     </ul>
-    <ul class="navbar-nav float-right">
-      <li class="nav-link">
-        <button class="btn btn-sm btn-danger fa fa-sign-out" (click)="onLogout()"></button>
+    <ul class="navbar-nav ">
+      <li class="nav-item">
+        <a (click)="onLogout()" class="nav-link fa fa-sign-out clickable">Logout</a>
       </li>
     </ul>
   </div>
 </nav>
 <p></p>
 <div class="container">
-   <div class="row">
-     <div class="col-md-3">
-       <div *ngIf="categories">
-           <ul class="list-group">
-             <li [ngClass]="[currentCategory==c? 'active' : 'btn-warning']" (click)="onGetProductsByCategory(c)"
-                 class="list-group-item clickable" *ngFor="let c of categories._embedded.categories">
-               {{c.name}}
-             </li>
-           </ul>
-       </div>
-     </div>
-     <p></p>
-     <div class="col-md-9">
-         <router-outlet>
+  <div class="row">
+    <div class="col-md-3">
+      <div>
+        <ul class="list-group">
+          <li [ngClass]="[currentCategory==c? '':'', 'btn btn-sm btn-warning']"  (click)="onGetProductsByCategory(c)"
+              class="list-group-item clickable" *ngFor="let c of categories?._embedded.categories">
+            {{c.name}}
+          </li>
+        </ul>
+      </div>
+<p></p>
+    </div>
+    <div class="col-md-9">
 
-         </router-outlet>
-     </div>
-   </div>
+      <router-outlet>
+
+      </router-outlet>
+    </div>
+  </div>
 </div>
 
