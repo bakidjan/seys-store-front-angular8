@@ -8,7 +8,7 @@ import {ProductModel} from '../models/product.model';
 })
 export class CatalogueService {
   public title: string;
-  public host: string = 'http://localhost:8080';
+  public host: string = 'http://192.168.201.11:8081';
 
   constructor(private httpClient: HttpClient) {
   }
